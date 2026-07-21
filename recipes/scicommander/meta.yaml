@@ -1,0 +1,45 @@
+{% set name = "scicommander" %}
+{% set version = "0.6.2" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://github.com/samuell/scicommander/archive/refs/tags/{{ version }}.tar.gz
+  sha256: cd91b1d11c57ebd6885424cabc2881f4f1abeb373849847b89ec8736734bef03
+
+build:
+  number: 0
+  skip: True  # [win]
+  run_exports:
+    - {{ pin_subpackage('scicommander', max_pin="") }}
+  script:
+    - mkdir -p $PREFIX/bin
+    - go build -trimpath -o $PREFIX/bin/sci ./cmd/sci
+    - chmod a+x $PREFIX/bin/sci
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ stdlib('c') }}
+    - {{ compiler('go') }}
+    - go-licenses
+
+test:
+  commands:
+     - sci -h
+     - sci help
+
+about:
+  home: https://github.com/samuell/scicommander
+  summary: 'Audit traces for any shell commands'
+  description: 'Small tool hat executes shell commands in a scientifically more reproducible and robust way, producing an audit report for every output.'
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE
+  dev_url: https://github.com/samuell/scicommander
+
+extra:
+  recipe-maintainers:
+    - samuell
